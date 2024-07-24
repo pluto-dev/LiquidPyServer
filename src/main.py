@@ -173,6 +173,19 @@ class KrakenService:
         except Exception as e:
             raise e
 
+    def set_speed_profile(
+        self, id: int, channel: str, profile: List[tuple[int, int]]
+    ) -> bool:
+        if self.devices.get(id) is None:
+            return False
+        device: KrakenX3 = self.devices[id]
+        try:
+            a = device.set_speed_profile(channel, profile)
+            print(a)
+            return True
+        except Exception as e:
+            raise e
+
 
 kraken_service = KrakenService()
 
@@ -201,6 +214,21 @@ def get_status(id: int):
         return {f"status": "can't get status for device with id: {id}"}, 404
     temp, speed, duty = status
     return {"temp": temp, "speed": speed, "duty": duty}, 200
+
+
+@app.route("/devices/<int:id>/speed", methods=["POST"])
+def set_speed(id: int):
+    if not request.method == "POST":
+        return {"status": "Method not allowed"}, 405
+    data = request.get_json()
+    if "channel" not in data or "profile" not in data:
+        return {"error": "missing required parameter"}, 404
+    channel: str = data.get("channel")
+    profile: List = data.get("profile")
+    print(profile)
+    if not kraken_service.set_speed_profile(id, channel, profile):
+        return {"error": "no device found"}, 404
+    return {"status": "OK"}, 200
 
 
 @app.route("/devices/<int:id>/color", methods=["POST"])
