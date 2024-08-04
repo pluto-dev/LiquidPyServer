@@ -26,7 +26,7 @@ class KrakenDevice:
     speed_channels: dict | None
     # (mode, size/variant, speed scale, min colors, max colors)
     color_modes = _COLOR_MODES
-    animation_speeds: List[str] = list(_ANIMATION_SPEEDS.keys())
+    animation_speeds = _ANIMATION_SPEEDS
 
     def __init__(
         self,
