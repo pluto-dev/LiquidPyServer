@@ -25,7 +25,7 @@ class KrakenDevice:
     color_channels: dict | None
     speed_channels: dict | None
     # (mode, size/variant, speed scale, min colors, max colors)
-    color_modes = _COLOR_MODES
+    color_modes = {k: v for k, v in _COLOR_MODES.items() if "backwards" not in k}
     animation_speeds = _ANIMATION_SPEEDS
 
     def __init__(
