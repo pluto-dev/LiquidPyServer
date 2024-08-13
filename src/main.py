@@ -160,7 +160,7 @@ class KrakenService:
         id: int,
         channel: str,
         mode: str,
-        colors: List[List[int]],
+        colors=[],
         speed: str = "normal",
         direction: str = "forward",
     ):
@@ -235,20 +235,18 @@ def set_speed(id: int):
 def set_color(
     id: int,
 ):
-    if not request.method == "POST":
-        return {"status": "Method not allowed"}, 405
+    request_data = request.get_json()
 
-    data = request.get_json()
-    channel = data.get("channel")
-    mode = data.get("mode")
-    colors = data.get("colors")
-    speed = data.get("speed")
-    direction = data.get("direction")
-
-    if not channel or not mode or not colors or not speed or not direction:
+    if not request_data or "channel" not in request_data or "mode" not in request_data:
         return {"status": "missing requiered field"}, 404
 
-    kraken_service.set_device_color(id, channel, mode, colors, speed, direction)
+    color_params = {
+        key: request_data[key]
+        for key in ["channel", "mode", "colors", "speed", "directions"]
+        if key in request_data
+    }
+
+    kraken_service.set_device_color(id, **color_params)
     return {"status": "OK"}, 200
 
 
