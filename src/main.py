@@ -241,9 +241,10 @@ def set_color(
         return {"status": "missing requiered field"}, 404
 
     color_params = {
-        key: request_data[key]
-        for key in ["channel", "mode", "colors", "speed", "directions"]
-        if key in request_data
+        key: value
+        for key, value in request_data.items()
+        if key in ["channel", "mode", "colors", "speed", "direction"]
+        and value is not None
     }
 
     kraken_service.set_device_color(id, **color_params)
